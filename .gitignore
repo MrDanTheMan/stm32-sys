@@ -1,0 +1,4 @@
+# BUILT & INTERMIDAIATE FILES
+/build/*
+/bin/*
+.vscode/*
