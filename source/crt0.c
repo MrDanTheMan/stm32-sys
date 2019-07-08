@@ -15,10 +15,6 @@ void FlashToRAM(unsigned long *src, unsigned long *dest, unsigned long *end);
 void ZeroMemory(unsigned long *from, unsigned long *to);
 extern void main(void);
 
-// Global variable used to look up current system clock speed and tick count
-extern uint32_t SysClkFreq;
-extern uint32_t SysClkMs;
-
 // Memory addresses from the linker script
 extern unsigned long __data_flash;
 extern unsigned long __data_begin;
@@ -32,12 +28,16 @@ extern unsigned long __stack_end;
 // This method is called as soon as the MCU board is reset
 void __reset_handler(void)
 {
+    // Copy flash sys data to memory
     FlashToRAM(&__data_flash, &__data_begin, &__data_end);
     ZeroMemory(&__bss_start__, &__bss_end__);
-    ConfigureSys();
-    //ConfigureSysClockHSI();
-    ConfigureSysClockPLL();
-    ConfigureSysTick(SysClkFreq / 1000UL);
+
+    // Configure system clocks
+    CLKResetClocks();
+    CLKInitSysClock(CLK_SRC_PLL);
+    SYSConfigureTick(g_SysClkFreq / 1000UL);
+
+    // Enter application scope
     main();
 }
 
@@ -46,7 +46,7 @@ void __reset_handler(void)
 /// Lets us measure the time since boot
 void __sys_tick_handler(void)
 {
-    SysClkMs++;
+    g_SysClkMs++;
 }
 
 // Dummy handler used for all other interrupt handlers that we do not care at the moment
