@@ -64,7 +64,7 @@ void CLKSetPrescalers(const uint32_t ahb, const uint32_t apb1, const uint32_t ap
     __CLEAR (RCC->CFGR, RCC_CFGR_PPRE1_0);
     __CLEAR (RCC->CFGR, RCC_CFGR_PPRE1_1);
     __CLEAR (RCC->CFGR, RCC_CFGR_PPRE1_2);
-    switch(ahb)
+    switch(apb1)
     {
         case 2 : RCC->CFGR |= RCC_CFGR_PPRE1_DIV2 << RCC_CFGR_PPRE1_Pos; break;
         case 4 : RCC->CFGR |= RCC_CFGR_PPRE1_DIV4 << RCC_CFGR_PPRE1_Pos; break;
@@ -76,7 +76,7 @@ void CLKSetPrescalers(const uint32_t ahb, const uint32_t apb1, const uint32_t ap
     __CLEAR (RCC->CFGR, RCC_CFGR_PPRE2_0);
     __CLEAR (RCC->CFGR, RCC_CFGR_PPRE2_1);
     __CLEAR (RCC->CFGR, RCC_CFGR_PPRE2_2);
-    switch(ahb)
+    switch(apb2)
     {
         case 2 : RCC->CFGR |= RCC_CFGR_PPRE2_DIV2 << RCC_CFGR_PPRE2_Pos; break;
         case 4 : RCC->CFGR |= RCC_CFGR_PPRE2_DIV4 << RCC_CFGR_PPRE2_Pos; break;
