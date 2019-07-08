@@ -21,18 +21,18 @@ USART_TypeDef * USARTHandle(const uint32_t channel)
 void USARTSetGPIO(const uint32_t channel, const GPIODesc *gpio)
 {
     // NOTE: Might need the below
-    //CLEAR_BIT(GPIOC->OTYPER, GPIO_OTYPER_OT6);
-    //CLEAR_BIT(GPIOC->OTYPER, GPIO_OTYPER_OT8);
+    //__CLEAR(GPIOC->OTYPER, GPIO_OTYPER_OT6);
+    //__CLEAR(GPIOC->OTYPER, GPIO_OTYPER_OT8);
 
-    //CLEAR_BIT(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR6_0);
-    //SET_BIT(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR6_1);
-    //CLEAR_BIT(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR8_0);
-    //SET_BIT(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR8_1);
+    //__CLEAR(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR6_0);
+    //__SET(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR6_1);
+    //__CLEAR(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR8_0);
+    //__SET(GPIOC->OSPEEDR, GPIO_OSPEEDER_OSPEEDR8_1);
 
-    //SET_BIT(GPIOC->PUPDR, GPIO_PUPDR_PUPD6_0);
-    //CLEAR_BIT(GPIOC->PUPDR, GPIO_PUPDR_PUPD6_1);
-    //SET_BIT(GPIOC->PUPDR, GPIO_PUPDR_PUPD8_0);
-    //CLEAR_BIT(GPIOC->PUPDR, GPIO_PUPDR_PUPD8_1);
+    //__SET(GPIOC->PUPDR, GPIO_PUPDR_PUPD6_0);
+    //__CLEAR(GPIOC->PUPDR, GPIO_PUPDR_PUPD6_1);
+    //__SET(GPIOC->PUPDR, GPIO_PUPDR_PUPD8_0);
+    //__CLEAR(GPIOC->PUPDR, GPIO_PUPDR_PUPD8_1);
 
     // NOTE: Depending on the platform different alternative pin mode might be indicating USART mode
     // NOTE: For now we only support default platform -- STM32F401RE
@@ -53,9 +53,9 @@ void USARTClkEnable(const uint32_t channel)
     #if PLATFORM == PLAT_STM32F401RE
     switch (channel)
     {
-        case USART_CHANNEL1: SET_BIT(RCC->APB2ENR, RCC_APB2ENR_USART1EN); return;
-        case USART_CHANNEL2: SET_BIT(RCC->APB1ENR, RCC_APB1ENR_USART2EN); return;
-        case USART_CHANNEL6: SET_BIT(RCC->APB2ENR, RCC_APB2ENR_USART6EN); return;
+        case USART_CHANNEL1: __SET(RCC->APB2ENR, RCC_APB2ENR_USART1EN); return;
+        case USART_CHANNEL2: __SET(RCC->APB1ENR, RCC_APB1ENR_USART2EN); return;
+        case USART_CHANNEL6: __SET(RCC->APB2ENR, RCC_APB2ENR_USART6EN); return;
     }
 
     #endif
@@ -68,9 +68,9 @@ void USARTClkDisable(const uint32_t channel)
     #if PLATFORM == PLAT_STM32F401RE
     switch (channel)
     {
-        case USART_CHANNEL1: CLEAR_BIT(RCC->APB2ENR, RCC_APB2ENR_USART1EN); return;
-        case USART_CHANNEL2: CLEAR_BIT(RCC->APB1ENR, RCC_APB1ENR_USART2EN); return;
-        case USART_CHANNEL6: CLEAR_BIT(RCC->APB2ENR, RCC_APB2ENR_USART6EN); return;
+        case USART_CHANNEL1: __CLEAR(RCC->APB2ENR, RCC_APB2ENR_USART1EN); return;
+        case USART_CHANNEL2: __CLEAR(RCC->APB1ENR, RCC_APB1ENR_USART2EN); return;
+        case USART_CHANNEL6: __CLEAR(RCC->APB2ENR, RCC_APB2ENR_USART6EN); return;
     }
 
     #endif
@@ -96,8 +96,8 @@ void USARTSetRate(const uint32_t channel, const uint32_t baud)
     double frac = modf(rate, &mantissa);
 
     USART_TypeDef *usart = USARTHandle(channel);
-    MODIFY_REG(usart->BRR, USART_BRR_DIV_Fraction, (uint32_t)frac << USART_BRR_DIV_Fraction_Pos);
-    MODIFY_REG(usart->BRR, USART_BRR_DIV_Mantissa, (uint32_t)mantissa << USART_BRR_DIV_Mantissa_Pos);
+    __MODIFY(usart->BRR, USART_BRR_DIV_Fraction, (uint32_t)frac << USART_BRR_DIV_Fraction_Pos);
+    __MODIFY(usart->BRR, USART_BRR_DIV_Mantissa, (uint32_t)mantissa << USART_BRR_DIV_Mantissa_Pos);
 }
 
 void USARTInit(const uint32_t channel, const GPIODesc *rx, const GPIODesc *tx)
@@ -115,20 +115,20 @@ void USARTInit(const uint32_t channel, const GPIODesc *rx, const GPIODesc *tx)
 
     // One Stop bit 
     USART_TypeDef *usart = USARTHandle(channel);
-    CLEAR_BIT(usart->CR3, USART_CR2_STOP_0);
-    CLEAR_BIT(usart->CR3, USART_CR2_STOP_1);
+    __CLEAR(usart->CR3, USART_CR2_STOP_0);
+    __CLEAR(usart->CR3, USART_CR2_STOP_1);
 
     // Word length is 8 bit
-    CLEAR_BIT(usart->CR1, USART_CR1_M);
+    __CLEAR(usart->CR1, USART_CR1_M);
 
     // Disable hardware flow
-    CLEAR_BIT(usart->CR2, USART_CR2_CPHA);
-    CLEAR_BIT(usart->CR2, USART_CR2_LBCL);
+    __CLEAR(usart->CR2, USART_CR2_CPHA);
+    __CLEAR(usart->CR2, USART_CR2_LBCL);
 
     // Enable usart controllers
-    MODIFY_REG(usart->CR1, USART_CR1_RE, 1 << USART_CR1_RE_Pos);
-    MODIFY_REG(usart->CR1, USART_CR1_TE, 1 << USART_CR1_TE_Pos);
-    MODIFY_REG(usart->CR1, USART_CR1_UE, 1 << USART_CR1_UE_Pos);
+    __MODIFY(usart->CR1, USART_CR1_RE, 1 << USART_CR1_RE_Pos);
+    __MODIFY(usart->CR1, USART_CR1_TE, 1 << USART_CR1_TE_Pos);
+    __MODIFY(usart->CR1, USART_CR1_UE, 1 << USART_CR1_UE_Pos);
 }
 
 void USARTWrite(const uint32_t channel, const char* msg, const uint32_t len)
